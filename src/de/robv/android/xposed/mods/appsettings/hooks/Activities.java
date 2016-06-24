@@ -31,7 +31,6 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.mods.appsettings.Common;
 import de.robv.android.xposed.mods.appsettings.XposedMod;
 
-
 public class Activities {
 
 	private static final String PROP_FULLSCREEN = "AppSettings-Fullscreen";
@@ -44,8 +43,7 @@ public class Activities {
 
 	public static void hookActivitySettings() {
 		try {
-			findAndHookMethod("com.android.internal.policy.impl.PhoneWindow", null, "generateLayout",
-					"com.android.internal.policy.impl.PhoneWindow.DecorView", new XC_MethodHook() {
+			findAndHookMethod("com.android.internal.policy.impl.PhoneWindow", null, "generateLayout", "com.android.internal.policy.impl.PhoneWindow.DecorView", new XC_MethodHook() {
 
 				@SuppressLint("InlinedApi")
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -59,12 +57,10 @@ public class Activities {
 
 					int fullscreen;
 					try {
-						fullscreen = XposedMod.prefs.getInt(packageName + Common.PREF_FULLSCREEN,
-								Common.FULLSCREEN_DEFAULT);
+						fullscreen = XposedMod.prefs.getInt(packageName + Common.PREF_FULLSCREEN, Common.FULLSCREEN_DEFAULT);
 					} catch (ClassCastException ex) {
 						// Legacy boolean setting
-						fullscreen = XposedMod.prefs.getBoolean(packageName + Common.PREF_FULLSCREEN, false)
-								? Common.FULLSCREEN_FORCE : Common.FULLSCREEN_DEFAULT;
+						fullscreen = XposedMod.prefs.getBoolean(packageName + Common.PREF_FULLSCREEN, false) ? Common.FULLSCREEN_FORCE : Common.FULLSCREEN_DEFAULT;
 					}
 					if (fullscreen == Common.FULLSCREEN_FORCE) {
 						window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -76,19 +72,14 @@ public class Activities {
 						window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 						setAdditionalInstanceField(window, PROP_FULLSCREEN, Boolean.TRUE);
 						setAdditionalInstanceField(decorView, PROP_IMMERSIVE, Boolean.TRUE);
-						decorView.setSystemUiVisibility(
-								View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-								| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-								| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+						decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 					}
 
 					if (XposedMod.prefs.getBoolean(packageName + Common.PREF_NO_TITLE, false))
 						window.requestFeature(Window.FEATURE_NO_TITLE);
 
 					if (XposedMod.prefs.getBoolean(packageName + Common.PREF_ALLOW_ON_LOCKSCREEN, false))
-							window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-								WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-								WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+						window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
 					if (XposedMod.prefs.getBoolean(packageName + Common.PREF_SCREEN_ON, false)) {
 						window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -112,8 +103,7 @@ public class Activities {
 		}
 
 		try {
-			findAndHookMethod(Window.class, "setFlags", int.class, int.class,
-					new XC_MethodHook() {
+			findAndHookMethod(Window.class, "setFlags", int.class, int.class, new XC_MethodHook() {
 				@Override
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -156,8 +146,7 @@ public class Activities {
 
 		if (Build.VERSION.SDK_INT >= 19) {
 			try {
-				findAndHookMethod("android.view.ViewRootImpl", null, "dispatchSystemUiVisibilityChanged",
-						int.class, int.class, int.class, int.class, new XC_MethodHook() {
+				findAndHookMethod("android.view.ViewRootImpl", null, "dispatchSystemUiVisibilityChanged", int.class, int.class, int.class, int.class, new XC_MethodHook() {
 					@TargetApi(19)
 					@Override
 					protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -168,13 +157,12 @@ public class Activities {
 
 						// Should it be hidden?
 						View decorView = (View) getObjectField(param.thisObject, "mView");
-						Boolean immersive = (decorView == null)
-								? null
-								: (Boolean) getAdditionalInstanceField(decorView, PROP_IMMERSIVE);
+						Boolean immersive = (decorView == null) ? null : (Boolean) getAdditionalInstanceField(decorView, PROP_IMMERSIVE);
 						if (immersive == null || !immersive.booleanValue())
 							return;
 
-						// Enforce SYSTEM_UI_FLAG_HIDE_NAVIGATION and hide changes to this flag
+						// Enforce SYSTEM_UI_FLAG_HIDE_NAVIGATION and hide
+				        // changes to this flag
 						int globalVisibility = (Integer) param.args[1];
 						int localValue = (Integer) param.args[2];
 						param.args[1] = globalVisibility | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -201,8 +189,7 @@ public class Activities {
 		}
 
 		try {
-			findAndHookMethod(InputMethodService.class, "doStartInput",
-					InputConnection.class, EditorInfo.class, boolean.class, new XC_MethodHook() {
+			findAndHookMethod(InputMethodService.class, "doStartInput", InputConnection.class, EditorInfo.class, boolean.class, new XC_MethodHook() {
 				@Override
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 					EditorInfo info = (EditorInfo) param.args[1];
@@ -220,22 +207,17 @@ public class Activities {
 
 	public static void hookActivitySettingsInSystemServer(ClassLoader classLoader) {
 		try {
-			// Hook one of the several variations of ActivityStack.realStartActivityLocked from different ROMs
+			// Hook one of the several variations of
+			// ActivityStack.realStartActivityLocked from different ROMs
 			Method mthRealStartActivityLocked;
 			if (Build.VERSION.SDK_INT <= 18) {
 				try {
-					mthRealStartActivityLocked = findMethodExact("com.android.server.am.ActivityStack", classLoader, "realStartActivityLocked",
-							"com.android.server.am.ActivityRecord", "com.android.server.am.ProcessRecord",
-							boolean.class, boolean.class, boolean.class);
+					mthRealStartActivityLocked = findMethodExact("com.android.server.am.ActivityStack", classLoader, "realStartActivityLocked", "com.android.server.am.ActivityRecord", "com.android.server.am.ProcessRecord", boolean.class, boolean.class, boolean.class);
 				} catch (NoSuchMethodError t) {
-					mthRealStartActivityLocked = findMethodExact("com.android.server.am.ActivityStack", classLoader, "realStartActivityLocked",
-							"com.android.server.am.ActivityRecord", "com.android.server.am.ProcessRecord",
-							boolean.class, boolean.class);
+					mthRealStartActivityLocked = findMethodExact("com.android.server.am.ActivityStack", classLoader, "realStartActivityLocked", "com.android.server.am.ActivityRecord", "com.android.server.am.ProcessRecord", boolean.class, boolean.class);
 				}
 			} else {
-				mthRealStartActivityLocked = findMethodExact("com.android.server.am.ActivityStackSupervisor", classLoader, "realStartActivityLocked",
-						"com.android.server.am.ActivityRecord", "com.android.server.am.ProcessRecord",
-						boolean.class, boolean.class);
+				mthRealStartActivityLocked = findMethodExact("com.android.server.am.ActivityStackSupervisor", classLoader, "realStartActivityLocked", "com.android.server.am.ActivityRecord", "com.android.server.am.ProcessRecord", boolean.class, boolean.class);
 			}
 			hookMethod(mthRealStartActivityLocked, new XC_MethodHook() {
 				@Override
@@ -245,7 +227,8 @@ public class Activities {
 						int adj = -12;
 						Object proc = getObjectField(param.args[0], "app");
 
-						// Override the *Adj values if meant to be resident in memory
+						// Override the *Adj values if meant to be resident in
+			            // memory
 						if (proc != null) {
 							setIntField(proc, "maxAdj", adj);
 							if (Build.VERSION.SDK_INT <= 18)
@@ -278,8 +261,7 @@ public class Activities {
 						if (recentsMode == Common.PREF_RECENTS_FORCE) {
 							int flags = (intent.getFlags() & ~Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 							intent.setFlags(flags);
-						}
-						else if (recentsMode == Common.PREF_RECENTS_PREVENT)
+						} else if (recentsMode == Common.PREF_RECENTS_PREVENT)
 							intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 					}
 				}

@@ -2,6 +2,7 @@ package de.robv.android.xposed.mods.appsettings.settings;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import android.app.Activity;
@@ -130,11 +131,13 @@ public class PermissionsListAdapter extends ArrayAdapter<PermissionInfo> impleme
 		return mFilter;
 	}
 
-	/* Filter permissions by name, label or description based on contained text */
+	/*
+	 * Filter permissions by name, label or description based on contained text
+	 */
 	private class CustomFilter extends Filter {
 
 		private boolean matches(CharSequence value, CharSequence filter) {
-			return (value != null && value.toString().toLowerCase().contains(filter));
+			return (value != null && value.toString().toLowerCase(Locale.getDefault()).contains(filter));
 		}
 
 		@Override
@@ -144,7 +147,7 @@ public class PermissionsListAdapter extends ArrayAdapter<PermissionInfo> impleme
 			if (constraint == null || constraint.length() == 0) {
 				items.addAll(originalPermsList);
 			} else {
-				String findText = constraint.toString().toLowerCase();
+				String findText = constraint.toString().toLowerCase(Locale.getDefault());
 				PackageManager pm = context.getPackageManager();
 				for (PermissionInfo p : originalPermsList) {
 					if (matches(p.name, findText) || matches(p.loadLabel(pm), findText) || matches(p.loadDescription(pm), findText)) {
@@ -157,6 +160,7 @@ public class PermissionsListAdapter extends ArrayAdapter<PermissionInfo> impleme
 			return result;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		protected void publishResults(CharSequence constraint, FilterResults results) {
 			clear();

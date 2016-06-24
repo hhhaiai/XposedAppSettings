@@ -90,11 +90,11 @@ public class XposedModActivity extends Activity {
 
 	private List<SettingInfo> settings;
 
-	private static File prefsFile = new File(Environment.getDataDirectory(),
-			"data/" + Common.MY_PACKAGE_NAME + "/shared_prefs/" + Common.PREFS + ".xml");
+	private static File prefsFile = new File(Environment.getDataDirectory(), "data/" + Common.MY_PACKAGE_NAME + "/shared_prefs/" + Common.PREFS + ".xml");
 	private static File backupPrefsFile = new File(Environment.getExternalStorageDirectory(), "AppSettings-Backup.xml");
 	private SharedPreferences prefs;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		setTitle(R.string.app_name);
@@ -155,8 +155,7 @@ public class XposedModActivity extends Activity {
 
 		// Refresh the app that was just edited, if it's visible in the list
 		ListView list = (ListView) findViewById(R.id.lstApps);
-		if (requestCode >= list.getFirstVisiblePosition() &&
-				requestCode <= list.getLastVisiblePosition()) {
+		if (requestCode >= list.getFirstVisiblePosition() && requestCode <= list.getLastVisiblePosition()) {
 			View v = list.getChildAt(requestCode - list.getFirstVisiblePosition());
 			list.getAdapter().getView(requestCode, v, list);
 		} else if (requestCode == Integer.MAX_VALUE) {
@@ -239,17 +238,14 @@ public class XposedModActivity extends Activity {
 			}
 		});
 
-		new AlertDialog.Builder(this)
-			.setTitle(R.string.recents_title)
-			.setAdapter(adapter, new OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Intent i = new Intent(getApplicationContext(), ApplicationSettings.class);
-					i.putExtra("package", (String) data.get(which).get("package"));
-					startActivityForResult(i, Integer.MAX_VALUE);
-				}
-			})
-			.show();
+		new AlertDialog.Builder(this).setTitle(R.string.recents_title).setAdapter(adapter, new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Intent i = new Intent(getApplicationContext(), ApplicationSettings.class);
+				i.putExtra("package", (String) data.get(which).get("package"));
+				startActivityForResult(i, Integer.MAX_VALUE);
+			}
+		}).show();
 	}
 
 	private void doExport() {
@@ -258,8 +254,7 @@ public class XposedModActivity extends Activity {
 
 	private void doImport() {
 		if (!backupPrefsFile.exists()) {
-			Toast.makeText(this, getString(R.string.imp_exp_file_doesnt_exist, backupPrefsFile.getAbsolutePath()),
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(this, getString(R.string.imp_exp_file_doesnt_exist, backupPrefsFile.getAbsolutePath()), Toast.LENGTH_LONG).show();
 			return;
 		}
 
@@ -304,6 +299,7 @@ public class XposedModActivity extends Activity {
 	private class ImportTask extends AsyncTask<File, String, String> {
 		private boolean importSuccessful;
 
+		@SuppressWarnings("deprecation")
 		@Override
 		protected String doInBackground(File... params) {
 			importSuccessful = false;
@@ -311,7 +307,8 @@ public class XposedModActivity extends Activity {
 			File inFile = params[0];
 			String tempFilename = Common.PREFS + "-new";
 			File newPrefsFile = new File(prefsFile.getParentFile(), tempFilename + ".xml");
-			// Make sure the shared_prefs folder exists, with the proper permissions
+			// Make sure the shared_prefs folder exists, with the proper
+			// permissions
 			getSharedPreferences(tempFilename, Context.MODE_WORLD_READABLE).edit().commit();
 			try {
 				copyFile(inFile, newPrefsFile);
@@ -338,6 +335,7 @@ public class XposedModActivity extends Activity {
 			}
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		protected void onPostExecute(String result) {
 			if (importSuccessful) {
@@ -351,7 +349,6 @@ public class XposedModActivity extends Activity {
 			Toast.makeText(XposedModActivity.this, result, Toast.LENGTH_LONG).show();
 		}
 	}
-
 
 	private static void copyFile(File source, File dest) throws IOException {
 		InputStream in = null;
@@ -390,7 +387,6 @@ public class XposedModActivity extends Activity {
 		}
 	}
 
-
 	private void showAboutDialog() {
 		View vAbout;
 		vAbout = getLayoutInflater().inflate(R.layout.about, null);
@@ -414,8 +410,7 @@ public class XposedModActivity extends Activity {
 
 		// Display the correct version
 		try {
-			((TextView) vAbout.findViewById(R.id.version)).setText(getString(R.string.app_version,
-					getPackageManager().getPackageInfo(getPackageName(), 0).versionName));
+			((TextView) vAbout.findViewById(R.id.version)).setText(getString(R.string.app_version, getPackageManager().getPackageInfo(getPackageName(), 0).versionName));
 		} catch (NameNotFoundException e) {
 		}
 
@@ -478,7 +473,6 @@ public class XposedModActivity extends Activity {
 	private static boolean isModActive() {
 		return false;
 	}
-
 
 	@SuppressLint("DefaultLocale")
 	private void loadApps(ProgressDialog dialog) {
@@ -593,45 +587,45 @@ public class XposedModActivity extends Activity {
 				// Block or unblock the details based on the Active setting
 				enableFilterDetails(!FilterState.UNCHANGED.equals(filterActive));
 				((FilterItemComponent) filterDialog.findViewById(R.id.fltActive)).setOnFilterChangeListener(new FilterItemComponent.OnFilterChangeListener() {
-					@Override
-					public void onFilterChanged(FilterItemComponent item, FilterState state) {
-						enableFilterDetails(!FilterState.UNCHANGED.equals(state));
-					}
-				});
+			        @Override
+			        public void onFilterChanged(FilterItemComponent item, FilterState state) {
+				        enableFilterDetails(!FilterState.UNCHANGED.equals(state));
+			        }
+		        });
 
 				// Close the dialog with the possible options
 				((Button) filterDialog.findViewById(R.id.btnFilterCancel)).setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						filterDialog.dismiss();
-					}
-				});
+			        @Override
+			        public void onClick(View v) {
+				        filterDialog.dismiss();
+			        }
+		        });
 				((Button) filterDialog.findViewById(R.id.btnFilterClear)).setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						filterAppType = FilterState.ALL;
-						filterAppState = FilterState.ALL;
-						filterActive = FilterState.ALL;
-						for (SettingInfo setting : settings)
-							setting.filter = FilterState.ALL;
+			        @Override
+			        public void onClick(View v) {
+				        filterAppType = FilterState.ALL;
+				        filterAppState = FilterState.ALL;
+				        filterActive = FilterState.ALL;
+				        for (SettingInfo setting : settings)
+					        setting.filter = FilterState.ALL;
 
-						filterDialog.dismiss();
-						appListAdapter.getFilter().filter(nameFilter);
-					}
-				});
+				        filterDialog.dismiss();
+				        appListAdapter.getFilter().filter(nameFilter);
+			        }
+		        });
 				((Button) filterDialog.findViewById(R.id.btnFilterApply)).setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						filterAppType = ((FilterItemComponent) filterDialog.findViewById(R.id.fltAppType)).getFilterState();
-						filterAppState = ((FilterItemComponent) filterDialog.findViewById(R.id.fltAppState)).getFilterState();
-						filterActive = ((FilterItemComponent) filterDialog.findViewById(R.id.fltActive)).getFilterState();
-						for (SettingInfo setting : settings)
-							setting.filter = filterComponents.get(setting.settingKey).getFilterState();
+			        @Override
+			        public void onClick(View v) {
+				        filterAppType = ((FilterItemComponent) filterDialog.findViewById(R.id.fltAppType)).getFilterState();
+				        filterAppState = ((FilterItemComponent) filterDialog.findViewById(R.id.fltAppState)).getFilterState();
+				        filterActive = ((FilterItemComponent) filterDialog.findViewById(R.id.fltActive)).getFilterState();
+				        for (SettingInfo setting : settings)
+					        setting.filter = filterComponents.get(setting.settingKey).getFilterState();
 
-						filterDialog.dismiss();
-						appListAdapter.getFilter().filter(nameFilter);
-					}
-				});
+				        filterDialog.dismiss();
+				        appListAdapter.getFilter().filter(nameFilter);
+			        }
+		        });
 
 				filterDialog.show();
 			}
@@ -665,38 +659,38 @@ public class XposedModActivity extends Activity {
 				}
 				final PermissionsListAdapter adapter = new PermissionsListAdapter(XposedModActivity.this, items, new HashSet<String>(), false);
 				bld.setAdapter(adapter, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						filterPermissionUsage = adapter.getItem(which).name;
-						appListAdapter.getFilter().filter(nameFilter);
-					}
-				});
+			        @Override
+			        public void onClick(DialogInterface dialog, int which) {
+				        filterPermissionUsage = adapter.getItem(which).name;
+				        appListAdapter.getFilter().filter(nameFilter);
+			        }
+		        });
 
 				final View permsView = getLayoutInflater().inflate(R.layout.permission_search, null);
 				((SearchView) permsView.findViewById(R.id.searchPermission)).setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
-					@Override
-					public boolean onQueryTextSubmit(String query) {
-						adapter.getFilter().filter(query);
-						((SearchView) permsView.findViewById(R.id.searchPermission)).clearFocus();
-						return false;
-					}
+			        @Override
+			        public boolean onQueryTextSubmit(String query) {
+				        adapter.getFilter().filter(query);
+				        ((SearchView) permsView.findViewById(R.id.searchPermission)).clearFocus();
+				        return false;
+			        }
 
-					@Override
-					public boolean onQueryTextChange(String newText) {
-						adapter.getFilter().filter(newText);
-						return false;
-					}
-				});
+			        @Override
+			        public boolean onQueryTextChange(String newText) {
+				        adapter.getFilter().filter(newText);
+				        return false;
+			        }
+		        });
 				bld.setView(permsView);
 
 				bld.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						filterPermissionUsage = null;
-						appListAdapter.getFilter().filter(nameFilter);
-					}
-				});
+			        @Override
+			        public void onClick(DialogInterface dialog, int which) {
+				        filterPermissionUsage = null;
+				        appListAdapter.getFilter().filter(nameFilter);
+			        }
+		        });
 
 				AlertDialog dialog = bld.create();
 				dialog.getListView().setFastScrollEnabled(true);
@@ -707,9 +701,8 @@ public class XposedModActivity extends Activity {
 
 	}
 
-
 	// Handle background loading of apps
-	private class PrepareAppsAdapter extends AsyncTask<Void,Void,AppListAdapter> {
+	private class PrepareAppsAdapter extends AsyncTask<Void, Void, AppListAdapter> {
 		ProgressDialog dialog;
 
 		@Override
@@ -741,7 +734,6 @@ public class XposedModActivity extends Activity {
 		}
 	}
 
-
 	/** Hold filter state and other info for each setting key */
 	private static class SettingInfo {
 		String settingKey;
@@ -755,7 +747,6 @@ public class XposedModActivity extends Activity {
 		}
 	}
 
-
 	private class AppListFilter extends Filter {
 
 		private AppListAdapter adapter;
@@ -765,9 +756,11 @@ public class XposedModActivity extends Activity {
 			this.adapter = adapter;
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
-			// NOTE: this function is *always* called from a background thread, and
+			// NOTE: this function is *always* called from a background thread,
+			// and
 			// not the UI thread.
 
 			ArrayList<ApplicationInfo> items = new ArrayList<ApplicationInfo>();
@@ -780,15 +773,14 @@ public class XposedModActivity extends Activity {
 			FilterResults result = new FilterResults();
 			if (constraint != null && constraint.length() > 0) {
 				Pattern regexp = Pattern.compile(constraint.toString(), Pattern.LITERAL | Pattern.CASE_INSENSITIVE);
-				for (Iterator<ApplicationInfo> i = items.iterator(); i.hasNext(); ) {
+				for (Iterator<ApplicationInfo> i = items.iterator(); i.hasNext();) {
 					ApplicationInfo app = i.next();
-					if (!regexp.matcher(app.name == null ? "" : app.name).find()
-							&& !regexp.matcher(app.packageName).find()) {
+					if (!regexp.matcher(app.name == null ? "" : app.name).find() && !regexp.matcher(app.packageName).find()) {
 						i.remove();
 					}
 				}
 			}
-			for (Iterator<ApplicationInfo> i = items.iterator(); i.hasNext(); ) {
+			for (Iterator<ApplicationInfo> i = items.iterator(); i.hasNext();) {
 				ApplicationInfo app = i.next();
 				if (filteredOut(prefs, app))
 					i.remove();
@@ -816,8 +808,8 @@ public class XposedModActivity extends Activity {
 				return true;
 
 			if (FilterState.UNCHANGED.equals(filterActive))
-				// Ignore additional filters
-				return false;
+			    // Ignore additional filters
+			    return false;
 
 			for (SettingInfo setting : settings)
 				if (filteredOut(prefs.contains(packageName + setting.settingKey), setting.filter))
@@ -934,8 +926,7 @@ public class XposedModActivity extends Activity {
 			final ApplicationInfo app = filteredAppList.get(position);
 
 			holder.app_name.setText(app.name == null ? "" : app.name);
-			holder.app_package.setTextColor(prefs.getBoolean(app.packageName + Common.PREF_ACTIVE, false)
-					? Color.RED : Color.parseColor("#0099CC"));
+			holder.app_package.setTextColor(prefs.getBoolean(app.packageName + Common.PREF_ACTIVE, false) ? Color.RED : Color.parseColor("#0099CC"));
 			holder.app_package.setText(app.packageName);
 			holder.app_icon.setImageDrawable(defaultIcon);
 

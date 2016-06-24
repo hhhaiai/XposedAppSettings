@@ -35,27 +35,26 @@ public class PackagePermissions extends BroadcastReceiver {
 	}
 
 	public static void initHooks(ClassLoader classLoader) {
-		/* Hook to the PackageManager service in order to
-		 * - Listen for broadcasts to apply new settings and restart the app
-		 * - Intercept the permission granting function to remove disabled permissions
+		/*
+		 * Hook to the PackageManager service in order to - Listen for
+		 * broadcasts to apply new settings and restart the app - Intercept the
+		 * permission granting function to remove disabled permissions
 		 */
 		try {
 			final Class<?> clsPMS = findClass("com.android.server.pm.PackageManagerService", classLoader);
 
-			// Listen for broadcasts from the Settings part of the mod, so it's applied immediately
+			// Listen for broadcasts from the Settings part of the mod, so it's
+			// applied immediately
 			findAndHookMethod(clsPMS, "systemReady", new XC_MethodHook() {
 				@Override
-				protected void afterHookedMethod(MethodHookParam param)
-						throws Throwable {
+				protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 					Context mContext = (Context) getObjectField(param.thisObject, "mContext");
-					mContext.registerReceiver(new PackagePermissions(param.thisObject),
-							new IntentFilter(Common.MY_PACKAGE_NAME + ".UPDATE_PERMISSIONS"),
-							Common.MY_PACKAGE_NAME + ".BROADCAST_PERMISSION",
-							null);
+					mContext.registerReceiver(new PackagePermissions(param.thisObject), new IntentFilter(Common.MY_PACKAGE_NAME + ".UPDATE_PERMISSIONS"), Common.MY_PACKAGE_NAME + ".BROADCAST_PERMISSION", null);
 				}
 			});
 
-			// if the user has disabled certain permissions for an app, do as if the hadn't requested them
+			// if the user has disabled certain permissions for an app, do as if
+			// the hadn't requested them
 			XC_MethodHook hookGrantPermissions = new XC_MethodHook() {
 				@SuppressWarnings("unchecked")
 				@Override
@@ -72,14 +71,13 @@ public class PackagePermissions extends BroadcastReceiver {
 					param.setObjectExtra("orig_requested_permissions", origRequestedPermissions);
 
 					ArrayList<String> newRequestedPermissions = new ArrayList<String>(origRequestedPermissions.size());
-					for (String perm: origRequestedPermissions) {
+					for (String perm : origRequestedPermissions) {
 						if (!disabledPermissions.contains(perm))
 							newRequestedPermissions.add(perm);
 						else
-							// you requested those internet permissions? I didn't read that, sorry
-							Log.w(Common.TAG, "Not granting permission " + perm
-									+ " to package " + pkgName
-									+ " because you think it should not have it");
+			                // you requested those internet permissions? I
+			                // didn't read that, sorry
+			                Log.w(Common.TAG, "Not granting permission " + perm + " to package " + pkgName + " because you think it should not have it");
 					}
 
 					setObjectField(param.args[0], "requestedPermissions", newRequestedPermissions);
@@ -107,7 +105,8 @@ public class PackagePermissions extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		try {
-			// The app broadcasted a request to update settings for a running app
+			// The app broadcasted a request to update settings for a running
+			// app
 
 			// Validate the action being requested
 			if (!Common.ACTION_PERMISSIONS.equals(intent.getExtras().getString("action")))
