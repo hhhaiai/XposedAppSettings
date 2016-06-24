@@ -22,9 +22,9 @@ import android.widget.ListView;
 import android.widget.Switch;
 import de.robv.android.xposed.mods.appsettings.R;
 
-
 /**
- * Manages a popup dialog for editing the Permission Revoking settings for a package
+ * Manages a popup dialog for editing the Permission Revoking settings for a
+ * package
  */
 public class PermissionSettings {
 	private Dialog dialog;

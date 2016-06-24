@@ -9,7 +9,9 @@ import static de.robv.android.xposed.XposedHelpers.setAdditionalInstanceField;
 import static de.robv.android.xposed.XposedHelpers.setFloatField;
 import static de.robv.android.xposed.XposedHelpers.setIntField;
 import static de.robv.android.xposed.XposedHelpers.setObjectField;
+
 import java.util.Locale;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AndroidAppHelper;

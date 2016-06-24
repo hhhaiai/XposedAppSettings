@@ -64,8 +64,8 @@ public class ApplicationSettings extends Activity {
 
 	private LocaleList localeList;
 
-
 	/** Called when the activity is first created. */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -115,8 +115,7 @@ public class ApplicationSettings extends Activity {
 
 		// Update DPI field
 		if (prefs.getBoolean(pkgName + Common.PREF_ACTIVE, false)) {
-			((EditText) findViewById(R.id.txtDPI)).setText(String.valueOf(
-				prefs.getInt(pkgName + Common.PREF_DPI, 0)));
+			((EditText) findViewById(R.id.txtDPI)).setText(String.valueOf(prefs.getInt(pkgName + Common.PREF_DPI, 0)));
 		} else {
 			((EditText) findViewById(R.id.txtDPI)).setText("0");
 		}
@@ -139,8 +138,7 @@ public class ApplicationSettings extends Activity {
 		lstScreens.add(getString(R.string.settings_default));
 		for (int j = 1; j < Common.swdp.length; j++)
 			lstScreens.add(String.format("%dx%d", Common.wdp[j], Common.hdp[j]));
-		ArrayAdapter<String> screenAdapter = new ArrayAdapter<String>(this,
-			android.R.layout.simple_spinner_item, lstScreens);
+		ArrayAdapter<String> screenAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lstScreens);
 		screenAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spnScreen.setAdapter(screenAdapter);
 		spnScreen.setSelection(selectedScreen);
@@ -155,8 +153,7 @@ public class ApplicationSettings extends Activity {
 		localeList = new LocaleList(getString(R.string.settings_default));
 
 		final Spinner spnLanguage = (Spinner) findViewById(R.id.spnLocale);
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-			android.R.layout.simple_spinner_item, localeList.getDescriptionList());
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, localeList.getDescriptionList());
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spnLanguage.setAdapter(dataAdapter);
 		int selectedLocalePos = localeList.getLocalePos(prefs.getString(pkgName + Common.PREF_LOCALE, null));
@@ -171,7 +168,6 @@ public class ApplicationSettings extends Activity {
 				return true;
 			}
 		});
-
 
 		// Helper to list all apk folders under /res
 		((Button) findViewById(R.id.btnListRes)).setOnClickListener(new View.OnClickListener() {
@@ -209,7 +205,8 @@ public class ApplicationSettings extends Activity {
 					if (jar != null) {
 						try {
 							jar.close();
-						} catch (Exception ex) { }
+						} catch (Exception ex) {
+						}
 					}
 				}
 				txtPane.setText(contents);
@@ -220,7 +217,6 @@ public class ApplicationSettings extends Activity {
 			}
 		});
 
-
 		// Setup fullscreen settings
 		{
 			int fullscreen;
@@ -228,31 +224,21 @@ public class ApplicationSettings extends Activity {
 				fullscreen = prefs.getInt(pkgName + Common.PREF_FULLSCREEN, Common.FULLSCREEN_DEFAULT);
 			} catch (ClassCastException ex) {
 				// Legacy boolean setting
-				fullscreen = prefs.getBoolean(pkgName + Common.PREF_FULLSCREEN, false)
-						? Common.FULLSCREEN_FORCE : Common.FULLSCREEN_DEFAULT;
+				fullscreen = prefs.getBoolean(pkgName + Common.PREF_FULLSCREEN, false) ? Common.FULLSCREEN_FORCE : Common.FULLSCREEN_DEFAULT;
 			}
 			final int fullscreenSelection = fullscreen;
 			Spinner spnFullscreen = (Spinner) findViewById(R.id.spnFullscreen);
-			// Note: the order of these items must match the Common.FULLSCREEN_... constants
+			// Note: the order of these items must match the
+			// Common.FULLSCREEN_... constants
 			String[] fullscreenArray;
 			if (Build.VERSION.SDK_INT >= 19) {
-				fullscreenArray = new String[] {
-						getString(R.string.settings_default),
-						getString(R.string.settings_force),
-						getString(R.string.settings_prevent),
-						getString(R.string.settings_immersive)
-				};
+				fullscreenArray = new String[] { getString(R.string.settings_default), getString(R.string.settings_force), getString(R.string.settings_prevent), getString(R.string.settings_immersive) };
 			} else {
-				fullscreenArray = new String[] {
-						getString(R.string.settings_default),
-						getString(R.string.settings_force),
-						getString(R.string.settings_prevent)
-				};
+				fullscreenArray = new String[] { getString(R.string.settings_default), getString(R.string.settings_force), getString(R.string.settings_prevent) };
 			}
 
 			List<String> lstFullscreen = Arrays.asList(fullscreenArray);
-			ArrayAdapter<String> fullscreenAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, lstFullscreen);
+			ArrayAdapter<String> fullscreenAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lstFullscreen);
 			fullscreenAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spnFullscreen.setAdapter(fullscreenAdapter);
 			spnFullscreen.setSelection(fullscreenSelection);
@@ -277,8 +263,7 @@ public class ApplicationSettings extends Activity {
 		List<String> lstOrientations = new ArrayList<String>(Common.orientationLabels.length);
 		for (int j = 0; j < Common.orientationLabels.length; j++)
 			lstOrientations.add(getString(Common.orientationLabels[j]));
-		ArrayAdapter<String> orientationAdapter = new ArrayAdapter<String>(this,
-			android.R.layout.simple_spinner_item, lstOrientations);
+		ArrayAdapter<String> orientationAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lstOrientations);
 		orientationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spnOrientation.setAdapter(orientationAdapter);
 		spnOrientation.setSelection(selectedOrientation);
@@ -300,15 +285,12 @@ public class ApplicationSettings extends Activity {
 		{
 			int ongoingNotifs = prefs.getInt(pkgName + Common.PREF_ONGOING_NOTIF, Common.ONGOING_NOTIF_DEFAULT);
 			Spinner spnOngoingNotif = (Spinner) findViewById(R.id.spnOngoingNotifications);
-			// Note: the order of these items must match the Common.ONGOING_NOTIF_... constants
-			String[] ongoingNotifArray = new String[] {
-						getString(R.string.settings_default),
-						getString(R.string.settings_force),
-						getString(R.string.settings_prevent) };
+			// Note: the order of these items must match the
+			// Common.ONGOING_NOTIF_... constants
+			String[] ongoingNotifArray = new String[] { getString(R.string.settings_default), getString(R.string.settings_force), getString(R.string.settings_prevent) };
 
 			List<String> lstOngoingNotif = Arrays.asList(ongoingNotifArray);
-			ArrayAdapter<String> ongoingNotifAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, lstOngoingNotif);
+			ArrayAdapter<String> ongoingNotifAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lstOngoingNotif);
 			ongoingNotifAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spnOngoingNotif.setAdapter(ongoingNotifAdapter);
 			spnOngoingNotif.setSelection(ongoingNotifs);
@@ -328,8 +310,7 @@ public class ApplicationSettings extends Activity {
 			List<String> lstNotifPriorities = new ArrayList<String>(Common.notifPriLabels.length);
 			for (int j = 0; j < Common.notifPriLabels.length; j++)
 				lstNotifPriorities.add(getString(Common.notifPriLabels[j]));
-			ArrayAdapter<String> notifPriAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, lstNotifPriorities);
+			ArrayAdapter<String> notifPriAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lstNotifPriorities);
 			notifPriAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spnNotifPri.setAdapter(notifPriAdapter);
 			spnNotifPri.setSelection(selectedNotifPriority);
@@ -349,14 +330,13 @@ public class ApplicationSettings extends Activity {
 
 		// Setup recents mode options
 		final int selectedRecentsMode = prefs.getInt(pkgName + Common.PREF_RECENTS_MODE, Common.PREF_RECENTS_DEFAULT);
-		// Note: the order of these items must match the Common.RECENTS_... constants
-		String[] recentsModeArray = new String[] { getString(R.string.settings_default),
-				getString(R.string.settings_force), getString(R.string.settings_prevent) };
+		// Note: the order of these items must match the Common.RECENTS_...
+		// constants
+		String[] recentsModeArray = new String[] { getString(R.string.settings_default), getString(R.string.settings_force), getString(R.string.settings_prevent) };
 
 		Spinner spnRecentsMode = (Spinner) findViewById(R.id.spnRecentsMode);
 		List<String> lstRecentsMode = Arrays.asList(recentsModeArray);
-		ArrayAdapter<String> recentsModeAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, lstRecentsMode);
+		ArrayAdapter<String> recentsModeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lstRecentsMode);
 		recentsModeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spnRecentsMode.setAdapter(recentsModeAdapter);
 		spnRecentsMode.setSelection(selectedRecentsMode);
@@ -369,13 +349,13 @@ public class ApplicationSettings extends Activity {
 				try {
 					final PermissionSettings permsDlg = new PermissionSettings(ApplicationSettings.this, pkgName, allowRevoking, disabledPermissions);
 					permsDlg.setOnOkListener(new PermissionSettings.OnDismissListener() {
-						@Override
-						public void onDismiss(PermissionSettings obj) {
-							allowRevoking = permsDlg.getRevokeActive();
-							disabledPermissions.clear();
-							disabledPermissions.addAll(permsDlg.getDisabledPermissions());
-						}
-					});
+			            @Override
+			            public void onDismiss(PermissionSettings obj) {
+				            allowRevoking = permsDlg.getRevokeActive();
+				            disabledPermissions.clear();
+				            disabledPermissions.addAll(permsDlg.getDisabledPermissions());
+			            }
+		            });
 					permsDlg.display();
 				} catch (NameNotFoundException e) {
 				}
@@ -519,7 +499,8 @@ public class ApplicationSettings extends Activity {
 			return;
 		}
 
-		// Require confirmation to exit the screen and lose configuration changes
+		// Require confirmation to exit the screen and lose configuration
+		// changes
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.settings_unsaved_title);
 		builder.setIconAttribute(android.R.attr.alertDialogIcon);
@@ -538,15 +519,11 @@ public class ApplicationSettings extends Activity {
 		builder.show();
 	}
 
-
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		setResult(RESULT_OK, parentIntent);
 	}
-
-
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -586,6 +563,7 @@ public class ApplicationSettings extends Activity {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -605,7 +583,8 @@ public class ApplicationSettings extends Activity {
 						prefsEditor.putString(key, (String) value);
 					} else if (value instanceof Set) {
 						prefsEditor.remove(key);
-						// Commit and reopen the editor, as it seems to be bugged when updating a StringSet
+						// Commit and reopen the editor, as it seems to be
+						// bugged when updating a StringSet
 						prefsEditor.commit();
 						prefsEditor = prefs.edit();
 						prefsEditor.putStringSet(key, (Set<String>) value);
@@ -620,7 +599,8 @@ public class ApplicationSettings extends Activity {
 			// Update saved settings to detect modifications later
 			initialSettings = newSettings;
 
-			// Check if in addition to saving the settings, the app should also be killed
+			// Check if in addition to saving the settings, the app should also
+			// be killed
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.settings_apply_title);
 			builder.setMessage(R.string.settings_apply_detail);
@@ -656,13 +636,11 @@ public class ApplicationSettings extends Activity {
 			Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(pkgName);
 			startActivity(LaunchIntent);
 		} else if (item.getItemId() == R.id.menu_app_settings) {
-			startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-									Uri.parse("package:" + pkgName)));
+			startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + pkgName)));
 		} else if (item.getItemId() == R.id.menu_app_store) {
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + pkgName)));
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 
 }

@@ -147,7 +147,8 @@ public class FilterItemComponent extends LinearLayout {
 	 */
 	public static interface OnFilterChangeListener {
 		/**
-		 * Notification that this filter item has changed to a new selected state
+		 * Notification that this filter item has changed to a new selected
+		 * state
 		 */
 		public void onFilterChanged(FilterItemComponent item, FilterState state);
 	}

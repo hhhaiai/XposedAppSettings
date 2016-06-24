@@ -12,6 +12,7 @@ import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE;
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT;
+
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.os.Build;
@@ -23,7 +24,6 @@ public class Common {
 	public static final String MY_PACKAGE_NAME = Common.class.getPackage().getName();
 
 	public static final String ACTION_PERMISSIONS = "update_permissions";
-
 
 	public static final String PREFS = "ModSettings";
 
@@ -57,16 +57,9 @@ public class Common {
 	public static final int[] wdp = { 0, 320, 480, 600, 800, 1000 };
 	public static final int[] hdp = { 0, 480, 854, 1024, 1280, 1600 };
 
-	public static int[] orientationCodes = { Integer.MIN_VALUE,
-		SCREEN_ORIENTATION_UNSPECIFIED,
-		SCREEN_ORIENTATION_PORTRAIT, SCREEN_ORIENTATION_LANDSCAPE,
-		SCREEN_ORIENTATION_SENSOR,
-		SCREEN_ORIENTATION_SENSOR_PORTRAIT, SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
-		SCREEN_ORIENTATION_REVERSE_PORTRAIT, SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
-		SCREEN_ORIENTATION_FULL_SENSOR,
-		// These require API 18
-		SCREEN_ORIENTATION_USER_PORTRAIT, SCREEN_ORIENTATION_USER_LANDSCAPE,
-		SCREEN_ORIENTATION_FULL_USER };
+	public static int[] orientationCodes = { Integer.MIN_VALUE, SCREEN_ORIENTATION_UNSPECIFIED, SCREEN_ORIENTATION_PORTRAIT, SCREEN_ORIENTATION_LANDSCAPE, SCREEN_ORIENTATION_SENSOR, SCREEN_ORIENTATION_SENSOR_PORTRAIT, SCREEN_ORIENTATION_SENSOR_LANDSCAPE, SCREEN_ORIENTATION_REVERSE_PORTRAIT, SCREEN_ORIENTATION_REVERSE_LANDSCAPE, SCREEN_ORIENTATION_FULL_SENSOR,
+	        // These require API 18
+	        SCREEN_ORIENTATION_USER_PORTRAIT, SCREEN_ORIENTATION_USER_LANDSCAPE, SCREEN_ORIENTATION_FULL_USER };
 	{
 		if (Build.VERSION.SDK_INT < 18) {
 			// Strip out the last 3 entries
@@ -75,16 +68,9 @@ public class Common {
 			orientationCodes = newCodes;
 		}
 	}
-	public static int[] orientationLabels = { R.string.settings_default,
-		R.string.settings_ori_normal,
-		R.string.settings_ori_portrait, R.string.settings_ori_landscape,
-		R.string.settings_ori_forceauto,
-		R.string.settings_ori_portrait_sensor, R.string.settings_ori_landscape_sensor,
-		R.string.settings_ori_portrait_reverse, R.string.settings_ori_landscape_reverse,
-		R.string.settings_ori_forceauto_4way,
-		// These require API 18
-		R.string.settings_ori_portrait_user, R.string.settings_ori_landscape_user,
-		R.string.settings_ori_user_4way };
+	public static int[] orientationLabels = { R.string.settings_default, R.string.settings_ori_normal, R.string.settings_ori_portrait, R.string.settings_ori_landscape, R.string.settings_ori_forceauto, R.string.settings_ori_portrait_sensor, R.string.settings_ori_landscape_sensor, R.string.settings_ori_portrait_reverse, R.string.settings_ori_landscape_reverse, R.string.settings_ori_forceauto_4way,
+	        // These require API 18
+	        R.string.settings_ori_portrait_user, R.string.settings_ori_landscape_user, R.string.settings_ori_user_4way };
 	{
 		if (Build.VERSION.SDK_INT < 18) {
 			// Strip out the last 3 entries
@@ -94,15 +80,8 @@ public class Common {
 		}
 	}
 
-	public static final int[] notifPriCodes = { Integer.MIN_VALUE,
-		Notification.PRIORITY_MAX, Notification.PRIORITY_HIGH,
-		Notification.PRIORITY_DEFAULT,
-		Notification.PRIORITY_LOW, Notification.PRIORITY_MIN };
-	public static final int[] notifPriLabels = { R.string.settings_default,
-		R.string.settings_npri_max, R.string.settings_npri_high,
-		R.string.settings_npri_normal,
-		R.string.settings_npri_low,
-		R.string.settings_npri_min };
+	public static final int[] notifPriCodes = { Integer.MIN_VALUE, Notification.PRIORITY_MAX, Notification.PRIORITY_HIGH, Notification.PRIORITY_DEFAULT, Notification.PRIORITY_LOW, Notification.PRIORITY_MIN };
+	public static final int[] notifPriLabels = { R.string.settings_default, R.string.settings_npri_max, R.string.settings_npri_high, R.string.settings_npri_normal, R.string.settings_npri_low, R.string.settings_npri_min };
 
 	public static final int FULLSCREEN_DEFAULT = 0;
 	public static final int FULLSCREEN_FORCE = 1;
