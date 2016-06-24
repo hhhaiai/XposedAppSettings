@@ -55,6 +55,27 @@ public class XposedMod implements IXposedHookZygoteInit, IXposedHookLoadPackage 
 
 	public static XSharedPreferences prefs;
 
+
+	/**
+	 * <pre>
+	 * Xposed的流程:
+	 * 		预加载资源初始化:
+	 * 			a).获取初始化类名 getStartClassName
+	 * 			b).检查Xpised版本 ,通过XposedBridge.jar
+	 * 			c).本地资源初始化好的情况下(通过initNative判断),初始化库里的基本资源(initXbridgeZygote)
+	 * 			d).加载对应的modules
+	 * 					Ⅰ.加载module列表[插件列表位置/data/data/de.robv.android.xposed.installer/conf/modules.list]
+	 * 					Ⅱ.若存在module,则遍历加载
+	 * 					Ⅲ.加载逻辑： 检查apk是否存在-->是否有初始化文件描述(assets/xposed_init)
+	 * 						-->主类格式是否为IXposedMod(IXposedHookLoadPackage其实也是封装了一层的IXposedMod)-->是否需要主类是否为加载资源类-->反射实例化主类
+	 * 						-->调用主类的孵化器初始化接口initZygote(通过是否是优先初始化来实现的,如果优先加载资源需要实现IXposedHookZygoteInit接口)  ===>用于优先高的加载
+	 * 						-->调用主类的拦截包名方法接口hookLoadPackage(若使用此功能则实现IXposedHookLoadPackage接口)			==>用于平时runtime等函数信息的拦截
+	 * 						-->调用主类的拦截资源文件方法接口hookInitPackageResources(实现IXposedHookInitPackageResources接口就行)	 ==>用于系统/app资源拦截
+	 * 						-->调用主类的环境变量调整方法接口initCmdApp(这个有些特殊,我的理解是初始化环境变量使用的,可能还有他用,实现IXposedHookCmdInit接口，复写initCmdApp方法即可)  ==>应该可以便捷调整环境变量
+	 * 						-->至此modules基本初始化大流程完毕
+	 * 			e).初始化系统孵化器/或者拦截后的Runtime
+	 * </pre>
+	 */
 	@Override
 	public void initZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
 		loadPrefs();
